@@ -19,6 +19,6 @@ class DataLoader:
     
     @staticmethod
     def split_data(x, y):
-        x_temp,x_test,y_temp,y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-        x_train,x_val,y_train,y_val = train_test_split(x_temp, y_temp,test_size=0.2, random_state=42)
+        x_temp,x_test,y_temp,y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y)
+        x_train,x_val,y_train,y_val = train_test_split(x_temp, y_temp,test_size=0.2, random_state=42, stratify= y_temp)
         return x_train, x_val, x_test, y_train, y_val, y_test

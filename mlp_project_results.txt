@@ -1,0 +1,88 @@
+MLP Model Experiment Results
+=============================
+
+Processing Dataset: imdb.csv
+
+Step 1: Find Optimal Architecture & Regularization (For better runtime, O(n to the power of 4) is achieved instead of 6...
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: relu, BN: True, Dropout: 0.3 | Validation F1: 0.8776
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: relu, BN: False, Dropout: 0.3 | Validation F1: 0.8755
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: leaky_relu, BN: True, Dropout: 0.3 | Validation F1: 0.8777
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: leaky_relu, BN: False, Dropout: 0.3 | Validation F1: 0.8804
+
+Step 1 Best => Arch Config: {'hidden_layer_size': (512, 256), 'activation_func': 'leaky_relu', 'batch_norm': False, 'dropout_rate': 0.3}, F1: 0.8804
+
+Step 2: Fine Tuning of batch and lr:
+Early Stopping is applied when Epoch 6/50.
+
+Batch: 32, LR: 0.001 -> Val F1: 0.8797
+Early Stopping is applied when Epoch 6/50.
+
+Batch: 32, LR: 0.0005 -> Val F1: 0.8788
+Early Stopping is applied when Epoch 6/50.
+
+Batch: 64, LR: 0.001 -> Val F1: 0.8792
+Early Stopping is applied when Epoch 6/50.
+
+Batch: 64, LR: 0.0005 -> Val F1: 0.8832
+
+Best Overall Validation F1 Score: 0.8832
+Best Configuration: {'hidden_layer_size': (512, 256), 'activation_func': 'leaky_relu', 'batch_norm': False, 'dropout_rate': 0.3, 'batch_size': 64, 'learning_rate': 0.0005, 'patience': 5}
+
+====Evaluating Best MLP Model on Test Set (imdb.csv)===
+Test Results for imdb.csv:
+Test Accuracy: 0.8816, F1 Score: 0.8815, MSE: 0.1184
+Confusion Matrix:
+                   Negative    Positive
+        Negative:    4283    (TN)  717     (FP)
+        Positive:    467     (FN)  4533    (TP)
+Processing Dataset: tweets.csv
+
+Step 1: Find Optimal Architecture & Regularization (For better runtime, O(n to the power of 4) is achieved instead of 6...
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: relu, BN: True, Dropout: 0.3 | Validation F1: 0.6472
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: relu, BN: False, Dropout: 0.3 | Validation F1: 0.6695
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: leaky_relu, BN: True, Dropout: 0.3 | Validation F1: 0.6513
+Early Stopping is applied when Epoch 6/50.
+
+Arch: (512, 256), Act: leaky_relu, BN: False, Dropout: 0.3 | Validation F1: 0.6682
+
+Step 1 Best => Arch Config: {'hidden_layer_size': (512, 256), 'activation_func': 'relu', 'batch_norm': False, 'dropout_rate': 0.3}, F1: 0.6695
+
+Step 2: Fine Tuning of batch and lr:
+Early Stopping is applied when Epoch 6/50.
+
+Batch: 32, LR: 0.001 -> Val F1: 0.6637
+Early Stopping is applied when Epoch 7/50.
+
+Batch: 32, LR: 0.0005 -> Val F1: 0.6592
+Early Stopping is applied when Epoch 6/50.
+
+Batch: 64, LR: 0.001 -> Val F1: 0.6614
+Early Stopping is applied when Epoch 7/50.
+
+Batch: 64, LR: 0.0005 -> Val F1: 0.6668
+
+Best Overall Validation F1 Score: 0.6668
+Best Configuration: {'hidden_layer_size': (512, 256), 'activation_func': 'relu', 'batch_norm': False, 'dropout_rate': 0.3, 'batch_size': 64, 'learning_rate': 0.0005, 'patience': 5}
+
+====Evaluating Best MLP Model on Test Set (tweets.csv)===
+Test Results for tweets.csv:
+Test Accuracy: 0.6658, F1 Score: 0.6679, MSE: 0.8075
+Confusion Matrix:
+                   Negative    Positive    Neutral
+        Negative:    994        106        456       
+        Positive:    108        1247       362       
+        Neutral:       411        394        1418      

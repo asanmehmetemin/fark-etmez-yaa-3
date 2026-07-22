@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-class MLP():
+class MLP(nn.Module):
     def __init__(self, input_size, output_size, hidden_layer_size=(128,64), activation_func = "relu", batch_norm = False, dropout_rate = 0.0):
 
         super().__init__()
@@ -11,7 +11,7 @@ class MLP():
             "leaky_relu": nn.LeakyReLU    
         }
 
-        activation_class = activation[activation_func]
+        activation_class = activation.get(activation_func, nn.ReLU)
 
         layers = []
         prev_size = input_size
@@ -21,7 +21,7 @@ class MLP():
 
             if batch_norm:
                 layers.append(nn.BatchNorm1d(hidden_size))
-            layers.append(activation_class)
+            layers.append(activation_class())
             if dropout_rate > 0.0:
                 layers.append(nn.Dropout(dropout_rate))
             prev_size = hidden_size

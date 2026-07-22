@@ -37,12 +37,3 @@ def prepare_dataset(loader, max_features = 5000):
     }
 
     return dataset
-
-if __name__ == "__main__":
-    imdb_dataset = prepare_dataset(DataLoader.load_imdb)
-    torch.save(imdb_dataset, "imdb_data.pt")
-    print("IMDB DATA Ready")
-
-    tweets_dataset = prepare_dataset(DataLoader.load_tweets)
-    torch.save(tweets_dataset, "tweets_data.pt")
-    print("TWEETS DATA Ready")
