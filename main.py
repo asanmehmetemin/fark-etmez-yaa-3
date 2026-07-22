@@ -19,20 +19,37 @@ class TxtLogger:
 def optimize_and_evaluate_mlp(dataset_name, loader, logger):
     logger.log(f"Processing Dataset: {dataset_name}")
 
-    dataset = prepare_dataset(loader, max_features=5000) #OPTIMISATION
+    dataset = prepare_dataset(loader, max_features=5000)
     
     input_size = dataset["n_features"]
     output_size = dataset["n_classes"]
 
     logger.log("\nStep 1: Find Optimal Architecture & Regularization (For better runtime, O(n to the power of 4) is achieved instead of 6...")
+    
+    sample_batch = None
+    sample_lr = None
+    patience = None
+    Archs = None
+    activations = None
+    batch_norms = None
+    dropout_rates = None
 
-    sample_batch = 64  #OPTIMISATION (pick one from Step2)
-    sample_lr = 0.001  #OPTIMISATION (pick one from Steo2)
-    patience = 5  #OPTIMISATION
-    Archs = [(128,64),(256,128),(512,256)]  #OPTIMISATION (2 li 3 lu ?)
-    activations = ["relu", "leaky_relu","tanh"]  #OPTIMISATION
-    batch_norms = [True, False]  #OPTIMISATION
-    dropout_rates = [0.0,0.3]  #OPTIMISATION
+    if dataset_name == "imdb.csv":       
+        sample_batch = 64  #OPTIMISATION (pick one from Step2)
+        sample_lr = 0.001  #OPTIMISATION (pick one from Steo2)
+        patience = 5  #OPTIMISATION
+        Archs = [(128,64)]  #OPTIMISATION (2 li 3 lu ?)
+        activations = ["relu"]  #OPTIMISATION
+        batch_norms = [True]  #OPTIMISATION
+        dropout_rates = [0.0]  #OPTIMISATION
+    elif dataset_name == "tweets.csv":
+        sample_batch = 64  #OPTIMISATION (pick one from Step2)
+        sample_lr = 0.001  #OPTIMISATION (pick one from Steo2)
+        patience = 5  #OPTIMISATION
+        Archs = [(128,64),(256,128),(512,256)]  #OPTIMISATION (2 li 3 lu ?)
+        activations = ["relu", "leaky_relu","tanh"]  #OPTIMISATION
+        batch_norms = [True, False]  #OPTIMISATION
+        dropout_rates = [0.0,0.3]  #OPTIMISATION
 
     best1_f1 = -1.0
     best1_config = None
@@ -72,9 +89,18 @@ def optimize_and_evaluate_mlp(dataset_name, loader, logger):
 
     logger.log("Step 2: Fine Tuning of batch and lr:")
 
-    batch_sizes = [32,64,128]  #OPTIMISATION
-    learning_rates = [0.001, 0.0005, 0.0001]  #OPTIMISATION
-    patience_val = [3,5,10] #OPTIMISATION
+    batch_sizes = None
+    learning_rates = None
+    patience_val = None
+
+    if dataset_name == "imdb.csv":
+        batch_sizes = [32]  #OPTIMISATION
+        learning_rates = [0.001]  #OPTIMISATION
+        patience_val = [3] #OPTIMISATION
+    elif dataset_name == "tweets.csv":
+        batch_sizes = [32,64,128]  #OPTIMISATION
+        learning_rates = [0.001, 0.0005, 0.0001]  #OPTIMISATION
+        patience_val = [3,5,10] #OPTIMISATION
 
     best_final_f1 = -1.0
     best_final_config = None
