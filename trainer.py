@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
+import copy
 
 class MLPTrainer:
     def __init__(self, model, learning_rate = 0.001, patience=5, device=None):
@@ -44,7 +45,7 @@ class MLPTrainer:
             if validation_loss < best_loss:
                 best_loss = validation_loss
                 patience_ctr = 0
-                self.best_model_weights = self.model.state_dict().copy()
+                self.best_model_weights = copy.deepcopy(self.model.state_dict())
             else:
                 patience_ctr += 1
 

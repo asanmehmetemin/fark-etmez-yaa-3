@@ -29,10 +29,10 @@ def optimize_and_evaluate_mlp(dataset_name, loader, logger):
     sample_batch = 64  #OPTIMISATION (pick one from Step2)
     sample_lr = 0.001  #OPTIMISATION (pick one from Steo2)
     patience = 5  #OPTIMISATION
-    Archs = [(512,256)]  #OPTIMISATION (2 li 3 lu ?)
-    activations = ["relu", "leaky_relu"]  #OPTIMISATION
+    Archs = [(128,64),(256,128),(512,256)]  #OPTIMISATION (2 li 3 lu ?)
+    activations = ["relu", "leaky_relu","tanh"]  #OPTIMISATION
     batch_norms = [True, False]  #OPTIMISATION
-    dropout_rates = [0.3]  #OPTIMISATION
+    dropout_rates = [0.0,0.3]  #OPTIMISATION
 
     best1_f1 = -1.0
     best1_config = None
@@ -72,8 +72,9 @@ def optimize_and_evaluate_mlp(dataset_name, loader, logger):
 
     logger.log("Step 2: Fine Tuning of batch and lr:")
 
-    batch_sizes = [32,64]  #OPTIMISATION
-    learning_rates = [0.001, 0.0005]  #OPTIMISATION
+    batch_sizes = [32,64,128]  #OPTIMISATION
+    learning_rates = [0.001, 0.0005, 0.0001]  #OPTIMISATION
+    patience_val = [3,5,10] #OPTIMISATION
 
     best_final_f1 = -1.0
     best_final_config = None
@@ -81,32 +82,33 @@ def optimize_and_evaluate_mlp(dataset_name, loader, logger):
 
     for batch in batch_sizes:
         for lr in learning_rates:
-            model = MLP(
-                input_size=input_size,
-                output_size=output_size,
-                hidden_layer_size=best1_config['hidden_layer_size'],
-                activation_func=best1_config['activation_func'],
-                batch_norm=best1_config['batch_norm'],
-                dropout_rate=best1_config['dropout_rate']
-            )
+            for patience in patience_val:
+                model = MLP(
+                    input_size=input_size,
+                    output_size=output_size,
+                    hidden_layer_size=best1_config['hidden_layer_size'],
+                    activation_func=best1_config['activation_func'],
+                    batch_norm=best1_config['batch_norm'],
+                    dropout_rate=best1_config['dropout_rate']
+                )
 
-            trainer = MLPTrainer(model=model, learning_rate=lr, patience=patience)
-            trained_model, _ = trainer.train_and_validate(
-                dataset=dataset, batch_size=batch, max_epochs=50, logger=logger
-            )
+                trainer = MLPTrainer(model=model, learning_rate=lr, patience=patience)
+                trained_model, _ = trainer.train_and_validate(
+                    dataset=dataset, batch_size=batch, max_epochs=50, logger=logger
+                )
 
-            accuracy, f1, mse, cm = Evaluator.evaluate(trained_model, dataset["X_val"], dataset["Y_val"])
-            logger.log(f"\nBatch: {batch}, LR: {lr} -> Val F1: {f1:.4f}")
+                accuracy, f1, mse, cm = Evaluator.evaluate(trained_model, dataset["X_val"], dataset["Y_val"])
+                logger.log(f"\nBatch: {batch}, LR: {lr} -> Val F1: {f1:.4f}")
 
-            if f1 > best_final_f1:
-                best_final_f1 = f1
-                best_final_config = {
-                    **best1_config,
-                    'batch_size': batch,
-                    'learning_rate': lr,
-                    'patience': patience
-                }
-                best_model = trained_model
+                if f1 > best_final_f1:
+                    best_final_f1 = f1
+                    best_final_config = {
+                        **best1_config,
+                        'batch_size': batch,
+                        'learning_rate': lr,
+                        'patience': patience
+                    }
+                    best_model = trained_model
 
     logger.log(f"\nBest Overall Validation F1 Score: {best_final_f1:.4f}")
     logger.log(f"Best Configuration: {best_final_config}\n")
@@ -118,6 +120,14 @@ def optimize_and_evaluate_mlp(dataset_name, loader, logger):
     logger.log(f"Test Results for {dataset_name}:")
     logger.log(f"Test Accuracy: {test_acc:.4f}, F1 Score: {test_f1:.4f}, MSE: {test_mse:.4f}")
     logger.log(f"Confusion Matrix:\n{test_cm}") 
+
+    model_filename = f"{dataset_name.split('.')[0]}_best_mlp.pt"
+    torch.save({
+        "model_state_dict": best_model.state_dict(),
+        "config": best_final_config,
+        "input_size": input_size,
+        "output_size": output_size,
+    }, model_filename)
 
 
 if __name__ == "__main__":
