@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.env
+.vscode/
+*.log
+.DS_Store
+imdb_data.pt
+tweets_data.pt
+imdb.csv
+tweets.csv
+__pycache__/
