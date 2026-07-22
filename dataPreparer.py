@@ -4,6 +4,10 @@ import torch
 from dataLoader import DataLoader
 from featureExtractor import FeatureExtractor
 
+RANDOM_SEED = 42
+torch.manual_seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
+
 def prepare_dataset(loader, max_features = 5000):
     text, label = loader()
     text_train, text_val, text_test, label_train, label_val, label_test = DataLoader.split_data(text, label)
@@ -25,12 +29,12 @@ def prepare_dataset(loader, max_features = 5000):
     class_weights = torch.tensor(class_weight_val)
 
     dataset = {
-        "X_train": torch.tensor(train_vectors),
-        "X_val": torch.tensor(val_vectors),
-        "X_test": torch.tensor(test_vectors),
-        "Y_train": torch.tensor(label_train),
-        "Y_val": torch.tensor(label_val),
-        "Y_test": torch.tensor(label_test),
+        "X_train": torch.tensor(train_vectors, dtype=torch.float32),
+        "X_val": torch.tensor(val_vectors, dtype=torch.float32),
+        "X_test": torch.tensor(test_vectors, dtype=torch.float32),
+        "Y_train": torch.tensor(label_train, dtype=torch.long),
+        "Y_val": torch.tensor(label_val, dtype=torch.long),
+        "Y_test": torch.tensor(label_test, dtype=torch.long),
         "class_weights": class_weights,
         "n_classes": num_of_class,
         "n_features": train_vectors.shape[1]
